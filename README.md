@@ -115,7 +115,6 @@ Follow the [Heroku instructions](https://devcenter.heroku.com/articles/creating-
     heroku apps:create myapp
     git add .
     git commit -m "Prepping push to Heroku"
-    git remote add heroku git@heroku.com:myapp.git
     git push heroku master
 
 ### Setup the production database
