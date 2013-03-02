@@ -14,9 +14,12 @@
 /log/*.log
 /tmp
 
-#Ignore solr
+# Ignore solr
 /solr
 
-#Ignore generated schemas
+# Ignore generated schemas
 /db/migrate/*
+
+# Ignore local rvmrc file. Use your own Ruby.
+.rvmrc
 
