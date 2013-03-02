@@ -19,3 +19,4 @@
 
 #Ignore generated schemas
 /db/migrate/*
+
