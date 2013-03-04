@@ -12,7 +12,7 @@ end
 
 gem 'jquery-rails'
 
-gem 'artfully_ose', '~> 1.0.0.rc4'
+gem 'artfully_ose', '~> 1.1.0.rc1'
 gem 'thin'
 gem 'mysql2', '0.3.11'
 
