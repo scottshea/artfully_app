@@ -53,22 +53,24 @@ Also, before you begin you should set up your production MySQL database.
 
 ## Database
 
-Update database.yml to point to your mysql database.  Specify a local database and a production database.
+Update database.yml to point to your mysql database.  Specify a local database and a production database. You can create your databases like so:
+
+    rake db:create:all
 
 Run the migrations
 
-    bundle exec rake artfully_ose_engine:install:migrations
-    bundle exec rake db:migrate
+    rake artfully_ose_engine:install:migrations
+    rake db:migrate
 
 ## Running Locally
 
 If you intend to do any custom development or testing, go ahead and set up Artfully locally on your machine.  If you have no interest in this, feel free to skip ahead to Deployment to Heroku
     
-Open a rails console and run
+Open a rails console with `rails console` and run
 
     User.create!({:email => "youradmin@example.com", :password => "your_strong_password", :password_confirmation => "your_strong_password" })
     
-### Run
+### Turn on the local server
 
     foreman start
     
