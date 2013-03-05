@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120813005916) do
+ActiveRecord::Schema.define(:version => 20130305180074) do
 
   create_table "actions", :force => true do |t|
     t.integer  "organization_id"
@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
     t.integer  "subject_id"
     t.string   "subject_type"
     t.integer  "creator_id"
+    t.integer  "import_id"
+    t.datetime "deleted_at"
   end
 
   create_table "addresses", :force => true do |t|
@@ -43,12 +45,34 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
 
   add_index "addresses", ["person_id"], :name => "index_addresses_on_person_id"
 
+  create_table "audits", :force => true do |t|
+    t.integer  "auditable_id"
+    t.string   "auditable_type"
+    t.integer  "associated_id"
+    t.string   "associated_type"
+    t.integer  "user_id"
+    t.string   "user_type"
+    t.string   "username"
+    t.string   "action"
+    t.text     "audited_changes"
+    t.integer  "version",         :default => 0
+    t.string   "comment"
+    t.string   "remote_address"
+    t.datetime "created_at"
+  end
+
+  add_index "audits", ["associated_id", "associated_type"], :name => "associated_index"
+  add_index "audits", ["auditable_id", "auditable_type"], :name => "auditable_index"
+  add_index "audits", ["created_at"], :name => "index_audits_on_created_at"
+  add_index "audits", ["user_id", "user_type"], :name => "user_index"
+
   create_table "carts", :force => true do |t|
     t.string   "state"
     t.string   "transaction_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "type"
+    t.integer  "discount_id"
   end
 
   create_table "charts", :force => true do |t|
@@ -73,6 +97,27 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
+
+  create_table "discounts", :force => true do |t|
+    t.string   "code",                                   :null => false
+    t.boolean  "active",               :default => true, :null => false
+    t.string   "promotion_type",                         :null => false
+    t.text     "properties"
+    t.integer  "event_id",                               :null => false
+    t.integer  "organization_id",                        :null => false
+    t.integer  "user_id",                                :null => false
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
+    t.datetime "deleted_at"
+    t.integer  "minimum_ticket_count"
+    t.text     "sections"
+    t.integer  "limit"
+  end
+
+  create_table "discounts_shows", :force => true do |t|
+    t.integer "discount_id", :null => false
+    t.integer "show_id",     :null => false
+  end
 
   create_table "donations", :force => true do |t|
     t.integer  "amount"
@@ -99,6 +144,21 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
     t.integer  "image_file_size"
     t.string   "special_instructions_caption", :default => "Special Instructions"
     t.boolean  "show_special_instructions",    :default => false
+    t.integer  "import_id"
+    t.string   "uuid"
+  end
+
+  add_index "events", ["uuid"], :name => "index_events_on_uuid"
+
+  create_table "gateway_transactions", :force => true do |t|
+    t.string   "transaction_id"
+    t.boolean  "success"
+    t.integer  "service_fee"
+    t.integer  "amount"
+    t.string   "message"
+    t.text     "response"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
   end
 
   create_table "import_errors", :force => true do |t|
@@ -124,6 +184,7 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
     t.string   "status",          :default => "pending"
     t.text     "import_headers"
     t.integer  "organization_id"
+    t.string   "type"
   end
 
   create_table "items", :force => true do |t|
@@ -145,9 +206,13 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
     t.integer  "show_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "deleted_at"
+    t.integer  "discount_id"
+    t.integer  "original_price"
   end
 
   add_index "items", ["created_at"], :name => "index_items_on_created_at"
+  add_index "items", ["discount_id"], :name => "index_items_on_discount_id"
   add_index "items", ["order_id"], :name => "index_items_on_order_id"
   add_index "items", ["show_id"], :name => "index_items_on_show_id"
 
@@ -188,6 +253,8 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
     t.string   "type"
     t.string   "payment_method"
     t.text     "special_instructions"
+    t.integer  "import_id"
+    t.datetime "deleted_at"
   end
 
   add_index "orders", ["created_at"], :name => "index_orders_on_created_at"
@@ -200,7 +267,9 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
     t.string   "website"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "lifetime_value",          :default => 0
+    t.integer  "lifetime_value",             :default => 0
+    t.string   "email"
+    t.boolean  "receive_daily_sales_report", :default => true, :null => false
   end
 
   create_table "people", :force => true do |t|
@@ -222,6 +291,9 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
     t.integer  "import_id"
     t.datetime "deleted_at"
     t.integer  "lifetime_value",  :default => 0
+    t.boolean  "do_not_email",    :default => false
+    t.string   "salutation"
+    t.string   "title"
   end
 
   add_index "people", ["organization_id", "email"], :name => "index_people_on_organization_id_and_email"
@@ -235,19 +307,45 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
     t.datetime "updated_at"
   end
 
+  create_table "searches", :force => true do |t|
+    t.integer  "organization_id",      :null => false
+    t.string   "zip"
+    t.string   "state"
+    t.integer  "event_id"
+    t.integer  "min_lifetime_value"
+    t.integer  "min_donations_amount"
+    t.integer  "max_lifetime_value"
+    t.integer  "max_donations_amount"
+    t.datetime "min_donations_date"
+    t.datetime "max_donations_date"
+    t.string   "tagging"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+    t.string   "discount_code"
+  end
+
+  add_index "searches", ["organization_id"], :name => "index_searches_on_organization_id"
+
   create_table "sections", :force => true do |t|
     t.text    "name"
     t.integer "capacity"
     t.integer "price"
     t.integer "chart_id"
     t.text    "description"
+    t.boolean "storefront",  :default => true
+    t.boolean "box_office",  :default => true
   end
 
   create_table "segments", :force => true do |t|
-    t.string  "name"
-    t.string  "terms"
-    t.integer "organization_id"
+    t.string   "name",            :null => false
+    t.integer  "organization_id", :null => false
+    t.integer  "search_id",       :null => false
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
   end
+
+  add_index "segments", ["organization_id"], :name => "index_segments_on_organization_id"
+  add_index "segments", ["search_id"], :name => "index_segments_on_search_id"
 
   create_table "shows", :force => true do |t|
     t.string   "state"
@@ -255,10 +353,12 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
     t.integer  "event_id"
     t.integer  "chart_id"
     t.integer  "organization_id"
+    t.string   "uuid"
   end
 
   add_index "shows", ["event_id"], :name => "index_shows_on_event_id"
   add_index "shows", ["organization_id"], :name => "index_shows_on_organization_id"
+  add_index "shows", ["uuid"], :name => "index_shows_on_uuid"
 
   create_table "taggings", :force => true do |t|
     t.integer  "tag_id"
@@ -290,9 +390,12 @@ ActiveRecord::Schema.define(:version => 20120813005916) do
     t.datetime "updated_at"
     t.integer  "cart_id"
     t.integer  "section_id"
+    t.integer  "cart_price"
+    t.integer  "discount_id"
   end
 
   add_index "tickets", ["cart_id"], :name => "index_tickets_on_cart_id"
+  add_index "tickets", ["discount_id"], :name => "index_tickets_on_discount_id"
   add_index "tickets", ["organization_id"], :name => "index_tickets_on_organization_id"
   add_index "tickets", ["section_id", "show_id", "state"], :name => "index_tickets_on_section_id_and_show_id_and_state"
   add_index "tickets", ["show_id"], :name => "index_tickets_on_show_id"
