@@ -1,0 +1,6 @@
+development:
+  enabled: true
+  send_to: stdout
+
+production:
+  enabled: false

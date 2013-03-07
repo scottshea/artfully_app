@@ -38,7 +38,8 @@ module ArtfullyApp
     config.assets.version = '1.0'
     
     # Configure sensitive parameters which will be filtered from the log file.
-    config.filter_parameters += [:password, :password_confirmation, :card_number, :cvv]
+    config.filter_parameters += [:password, :password_confirmation, :number, :verification_value, :cvv, :card_number]
+    ENV.keys.each {|k| Exceptional::ENVIRONMENT_FILTER << k}
     
     #Heroku needs this flag set.  Other hosting providers may not.
     config.assets.initialize_on_precompile = false
