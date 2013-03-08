@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130305180074) do
+ActiveRecord::Schema.define(:version => 20130308194445) do
 
   create_table "actions", :force => true do |t|
     t.integer  "organization_id"
@@ -146,6 +146,9 @@ ActiveRecord::Schema.define(:version => 20130305180074) do
     t.boolean  "show_special_instructions",    :default => false
     t.integer  "import_id"
     t.string   "uuid"
+    t.boolean  "public",                       :default => false
+    t.string   "primary_category"
+    t.text     "secondary_categories"
   end
 
   add_index "events", ["uuid"], :name => "index_events_on_uuid"
@@ -281,7 +284,7 @@ ActiveRecord::Schema.define(:version => 20130305180074) do
     t.string   "last_name"
     t.string   "company_name"
     t.string   "website"
-    t.boolean  "dummy"
+    t.boolean  "dummy",            :default => false, :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "person_type"
@@ -290,10 +293,11 @@ ActiveRecord::Schema.define(:version => 20130305180074) do
     t.string   "linked_in_url"
     t.integer  "import_id"
     t.datetime "deleted_at"
-    t.integer  "lifetime_value",  :default => 0
-    t.boolean  "do_not_email",    :default => false
+    t.integer  "lifetime_value",   :default => 0
+    t.boolean  "do_not_email",     :default => false
     t.string   "salutation"
     t.string   "title"
+    t.text     "subscribed_lists"
   end
 
   add_index "people", ["organization_id", "email"], :name => "index_people_on_organization_id_and_email"
