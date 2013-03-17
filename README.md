@@ -88,6 +88,15 @@ Artful.ly OSE requires the following environment variables to be set if they are
     
     WEBSOLR_URL
 
+Additionally these are defaulted in the config.ru and config/unicorn.rb files but can be set in the environment as well
+    UNICORN_WORKERS
+    UNICORN_TIMEOUT
+    UNICORN_BACKLOG
+    MAX_REQUEST_MIN *used by unicorn killer*
+    MAX_REQUEST_MAX *used by unicorn killer*
+    OOM_MIN *used by unicorn killer*
+    OOM_MAX *used by unicorn killer*
+
 ## Deployment to Heroku
 
 ### About delayed_job

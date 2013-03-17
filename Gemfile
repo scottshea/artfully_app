@@ -11,7 +11,8 @@ end
 gem 'jquery-rails'
 
 gem 'artfully_ose', '~> 1.0.0.rc4'
-gem 'thin'
+gem 'unicorn', '~> 4.6.2' # web server
+gem 'unicorn-worker-killer'
 gem 'mysql2', '0.3.11'
 
 group :development do
